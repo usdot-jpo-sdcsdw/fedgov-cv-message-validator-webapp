@@ -16,7 +16,7 @@ public class ConfigurationTest {
 	@Test
 	public void test() throws JSONException, MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Configuration configuration = new Configuration();
-		SemiValidator validator = new SemiValidator("fedgov-cv-asn1-1.0.0-SNAPSHOT.jar");
+		SemiValidator validator = new SemiValidator();
 		@SuppressWarnings("unchecked")
 		List<String> messages = (List<String>)validator.getMessageTypes();
 		configuration.addConfiguration(EncodeVersion.v23.getValue(), messages);

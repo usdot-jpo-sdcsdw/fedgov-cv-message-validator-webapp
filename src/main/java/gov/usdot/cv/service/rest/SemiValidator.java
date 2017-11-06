@@ -14,18 +14,16 @@ import org.codehaus.jettison.json.JSONObject;
 import com.oss.asn1.DecodeFailedException;
 import com.oss.asn1.DecodeNotSupportedException;
 
-import gov.usdot.cv.service.util.CustomClassLoader;
-
 public class SemiValidator {
 
-	private CustomClassLoader loader;
+	private ClassLoader loader;
 	private Object coder;
 	private StringWriter debugWriter;
 	private Class<?> uperCoder, j2735Util, ConnectedVehicleMessageLookup;
 	private Method  decodeMethod, getMessageTypesMethod, decodeWithTypeMethod, enableAutomaticDecoding;
 	
-    public SemiValidator(String jarName) throws MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        loader = new CustomClassLoader( jarName );
+    public SemiValidator() throws MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    	loader = this.getClass().getClassLoader();
         initialize();
     }
     

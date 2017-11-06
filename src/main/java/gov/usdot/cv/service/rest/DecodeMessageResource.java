@@ -43,7 +43,7 @@ public class DecodeMessageResource {
 			configuration = new Configuration();
 			
 			log.info("Initializing validators map");
-			SemiValidator v23validator = new SemiValidator("fedgov-cv-asn1-1.0.0-SNAPSHOT.jar");
+			SemiValidator v23validator = new SemiValidator();
 			validators = new HashMap<EncodeVersion, SemiValidator>();
 			validators.put(EncodeVersion.v23, v23validator);
 			

@@ -25,7 +25,7 @@ public class SemiValidatorTest extends JerseyTest {
 	@Test
 	public void testDirect() throws MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, DecodeFailedException, DecodeNotSupportedException, SemiValidatorException {
 	
-		v23validator = new SemiValidator("fedgov-cv-asn1-1.0.0-SNAPSHOT.jar");
+		v23validator = new SemiValidator();
 		validators = new HashMap<DecodeMessageResource.EncodeVersion, SemiValidator>();
 		validators.put(DecodeMessageResource.EncodeVersion.v23, v23validator);
 		

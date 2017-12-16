@@ -129,11 +129,13 @@
 </div>
 
 </div>
-<div id="copyright">© Leidos </div>
+<div id="copyright">© Leidos</div>
+<div id="copyright">© Aerospace</div>
 </div>
 
 
 <script src="js/filedrag.js"></script>
+<script src="js/formatXml.js"></script>
 <script src="external/jquery-1.11.1/js/jquery.min.js"></script>
 <script src="external/bootstrap-3.2.0/js/bootstrap.min.js"></script>
 <script>
@@ -252,8 +254,8 @@
                     $("#type-results-textarea").removeClass(success_clazz);
                     $("#type-results-textarea").addClass(error_clazz);
            		}
-                $("#type-results-textarea").val(typeMessage)
-                $("#results-textarea").val(resultsMessage);
+                $("#type-results-textarea").val(typeMessage);
+                $("#results-textarea").val(formatXml(resultsMessage));
                 $("#button#validate").attr("disabled", false);
 			},
             error   : function(jqXHR, textStatus, errorThrown) {

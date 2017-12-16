@@ -8,14 +8,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.oss.asn1.DecodeFailedException;
-import com.oss.asn1.DecodeNotSupportedException;
-import com.oss.util.HexTool;
 import com.sun.jersey.test.framework.JerseyTest;
+
+import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecException;
+import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
 
 public class SemiValidatorTest extends JerseyTest {
 	
-	private static SemiValidator v23validator;
+	private static SemiValidator vMVPvalidator;
 	private static Map<DecodeMessageResource.EncodeVersion, SemiValidator> validators;
 	
 	public SemiValidatorTest() throws Exception {
@@ -23,16 +23,16 @@ public class SemiValidatorTest extends JerseyTest {
 	}
 
 	@Test
-	public void testDirect() throws MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, DecodeFailedException, DecodeNotSupportedException, SemiValidatorException {
+	public void testDirect() throws MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, CodecException, SemiValidatorException {
 	
-		v23validator = new SemiValidator();
+		vMVPvalidator = new SemiValidator();
 		validators = new HashMap<DecodeMessageResource.EncodeVersion, SemiValidator>();
-		validators.put(DecodeMessageResource.EncodeVersion.v23, v23validator);
+		validators.put(DecodeMessageResource.EncodeVersion.vMVP, vMVPvalidator);
 		
-		byte[] bytes = HexTool.parseHex("118000000008004f8580", false);
+		byte[] bytes = new HexPerData("118000000008004f8580").getPerData();
 		
-		v23validator.validate(bytes);
-		validators.get(DecodeMessageResource.EncodeVersion.v23).validate(bytes);
+		vMVPvalidator.validate(bytes);
+		validators.get(DecodeMessageResource.EncodeVersion.vMVP).validate(bytes);
 		
 		// Only one version, don't need negative
 /*		try{

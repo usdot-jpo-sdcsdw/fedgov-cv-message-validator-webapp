@@ -1,5 +1,6 @@
 package gov.usdot.cv.service.rest;
 
+import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
 import gov.usdot.cv.service.rest.DecodeMessageResult.Status;
 
 import java.util.HashMap;
@@ -19,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.oss.util.HexTool;
 import com.sun.jersey.core.util.Base64;
 
 @Path("/decode")
@@ -43,13 +43,13 @@ public class DecodeMessageResource {
 			configuration = new Configuration();
 			
 			log.info("Initializing validators map");
-			SemiValidator v23validator = new SemiValidator();
+			SemiValidator vMVPvalidator = new SemiValidator();
 			validators = new HashMap<EncodeVersion, SemiValidator>();
-			validators.put(EncodeVersion.v23, v23validator);
+			validators.put(EncodeVersion.vMVP, vMVPvalidator);
 			
-			String version = EncodeVersion.v23.getValue();
+			String version = EncodeVersion.vMVP.getValue();
 			@SuppressWarnings("unchecked")
-			List<String> messages = (List<String>)v23validator.getMessageTypes();
+			List<String> messages = (List<String>)vMVPvalidator.getMessageTypes();
 			configuration.addConfiguration(version, messages);
 			log.debug("Registered validator version: " + version);
 			// add more validator configurations here 
@@ -84,7 +84,7 @@ public class DecodeMessageResource {
 	}
 
 	enum EncodeVersion {
-		v20("2.0"), v21("2.1"), v22("2.2"), v23("2.3"), v24("2.4");
+		v20("2.0"), v21("2.1"), v22("2.2"), v23("2.3"), v24("2.4"), vMVP ("MVP");
 
 		private String representation;
 
@@ -156,7 +156,7 @@ public class DecodeMessageResource {
 					//if (encodedMsg.length()/2 != 0) {
 					//	throw new DecodeMessageException("Invalid hex string, hex string should have an even number of digits");
 					//}
-					encoded_ba = HexTool.parseHex(encodedMsg, false);
+					encoded_ba = new HexPerData(encodedMsg).getPerData();
 					break;
 				case BER:
 					log.error("Unexpected type BER");

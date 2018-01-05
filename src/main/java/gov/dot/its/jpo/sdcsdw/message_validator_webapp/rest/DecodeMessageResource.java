@@ -1,7 +1,7 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
-import gov.usdot.cv.service.rest.DecodeMessageResult.Status;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResult.Status;
 
 import java.util.HashMap;
 import java.util.List;

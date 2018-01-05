@@ -1,4 +1,4 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 import java.util.List;
 

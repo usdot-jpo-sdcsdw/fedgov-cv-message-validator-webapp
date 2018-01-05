@@ -1,10 +1,8 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import gov.usdot.cv.service.rest.DecodeMessageResult.Status;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -13,10 +11,13 @@ import org.junit.Test;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.test.framework.JerseyTest;
 
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResult.Status;
+
+
 public class DecodeMessageServiceTest extends JerseyTest  {
 
 	public DecodeMessageServiceTest() throws Exception {
-		super("gov.usdot.cv.service.rest");
+		super("gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest");
 	}
 	
 	class Message {

@@ -1,4 +1,4 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +12,9 @@ import com.sun.jersey.test.framework.JerseyTest;
 
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.exception.CodecException;
 import gov.dot.its.jpo.sdcsdw.asn1.perxercodec.per.HexPerData;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResource;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.SemiValidator;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.SemiValidatorException;
 
 public class SemiValidatorTest extends JerseyTest {
 	
@@ -19,7 +22,7 @@ public class SemiValidatorTest extends JerseyTest {
 	private static Map<DecodeMessageResource.EncodeVersion, SemiValidator> validators;
 	
 	public SemiValidatorTest() throws Exception {
-		super("gov.usdot.cv.service.rest");
+		super("gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest");
 	}
 
 	@Test

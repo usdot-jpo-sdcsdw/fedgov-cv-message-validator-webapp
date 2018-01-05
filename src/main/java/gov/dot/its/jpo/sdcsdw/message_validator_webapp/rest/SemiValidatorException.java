@@ -1,4 +1,4 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 public class SemiValidatorException extends Exception {
 	private static final long serialVersionUID = 1L;

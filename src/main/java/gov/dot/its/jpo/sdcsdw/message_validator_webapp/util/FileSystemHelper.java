@@ -1,4 +1,4 @@
-package gov.usdot.cv.service.util;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.util;
 
 import java.io.File;
 import java.util.Collection;

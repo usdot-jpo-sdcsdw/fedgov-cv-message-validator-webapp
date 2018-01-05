@@ -1,4 +1,4 @@
-package gov.usdot.cv.service.rest;
+package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +9,9 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 
-import gov.usdot.cv.service.rest.DecodeMessageResource.EncodeVersion;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.Configuration;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.SemiValidator;
+import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResource.EncodeVersion;
 
 public class ConfigurationTest {
 

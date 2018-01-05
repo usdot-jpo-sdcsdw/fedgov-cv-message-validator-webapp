@@ -1,30 +1,34 @@
 package gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest;
 
-import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
 import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.Configuration;
 import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.SemiValidator;
 import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResource.EncodeVersion;
 
-public class ConfigurationTest {
+public class ConfigurationTest
+{
 
 	@Test
-	public void test() throws JSONException, MalformedURLException, FileNotFoundException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void test() throws JSONException
+	{
 		Configuration configuration = new Configuration();
 		SemiValidator validator = new SemiValidator();
-		@SuppressWarnings("unchecked")
 		List<String> messages = (List<String>)validator.getMessageTypes();
-		configuration.addConfiguration(EncodeVersion.v23.getValue(), messages);
+		configuration.addConfiguration(EncodeVersion.vMVP.getValue(), messages);
 		Collections.sort(messages, Collections.reverseOrder());
-		configuration.addConfiguration("2.4", messages);
+		configuration.addConfiguration("MVP", messages);
 		configuration.setDefaultIndex(1);
+		configuration.setDefaultIndex(-1);
+		int defaultIndex = new JSONObject(configuration.toString()).getInt(Configuration.DEFAULT_INDEX_KEY);
+		assertEquals(1, defaultIndex);
 		System.out.println(configuration.toString(3));
 	}
 

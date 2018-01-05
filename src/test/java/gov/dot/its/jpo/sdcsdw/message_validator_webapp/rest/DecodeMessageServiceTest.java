@@ -13,41 +13,69 @@ import com.sun.jersey.test.framework.JerseyTest;
 
 import gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest.DecodeMessageResult.Status;
 
-
-public class DecodeMessageServiceTest extends JerseyTest  {
-
-	public DecodeMessageServiceTest() throws Exception {
-		super("gov.dot.its.jpo.sdcsdw.message_validator_webapp.rest");
+public class DecodeMessageServiceTest extends JerseyTest
+{
+	public DecodeMessageServiceTest() throws Exception
+	{
+		super(PACKAGE_NAME);
 	}
 	
-	class Message {
-		String version, messageName, encoding, message, messageType;
-		boolean isValid;
-		
-		Message( String version, String messageName, String encoding, boolean isValid, String message) {
-			this.version = version;
-			this.messageName = messageName;
-			this.encoding = encoding;
-			this.isValid = isValid;
-			this.message = message;
-			this.messageType = null;
-		}
-		
-		Message( String version, String messageName, String encoding, String messageType, boolean isValid, String message) {
-			this.version = version;
-			this.messageName = messageName;
-			this.encoding = encoding;
-			this.messageType = messageType;
-			this.isValid = isValid;
-			this.message = message;
-		}
-		
-		@Override
-		public String toString() {
-			return "Message [version=" + version + ", messageName=" + messageName + ", encoding=" + 
-							encoding + ", messageType=" + messageType + ", valid?=" + isValid + ", " + "message=" + message +"]";
-		}
+	@Test
+    public void testMessages() throws Exception
+	{   
+        for( Message message : test_messages ) {
+            System.out.println("Testing message: " + message.toString());
+            testMessage( message );
+        }
+    }
+	
+	@Test
+	public void testGetConfiguration() throws Exception
+	{
+	    WebResource webResource = resource().path("/decode/getConfiguration");
+	    DecodeMessageResult configuration = webResource.get(DecodeMessageResult.class);
+	    assertNotNull(configuration);
+	    assertEquals(Status.Success, configuration.getStatus());
+	    JSONObject configurationObject = new JSONObject(configuration.getMessage());
+	    
+	    JSONObject application = configurationObject.getJSONObject(Configuration.APPLICATION_KEY);
+	    
+	    assertEquals(Configuration.TITLE, application.get(Configuration.TITLE_KEY));
+	    assertEquals(Configuration.SUBTITLE, application.get(Configuration.SUBTITLE_KEY));
+	    assertEquals(Configuration.VERSION, application.get(Configuration.VERSION_KEY));
+	    assertEquals(Configuration.RELEASE, application.get(Configuration.RELEASE_KEY));
+	    assertEquals(Configuration.COPYRIGHT, application.get(Configuration.COPYRIGHT_KEY));
 	}
+	
+	static class Message
+    {
+        String version, messageName, encoding, message, messageType;
+        boolean isValid;
+        
+        Message( String version, String messageName, String encoding, boolean isValid, String message) {
+            this.version = version;
+            this.messageName = messageName;
+            this.encoding = encoding;
+            this.isValid = isValid;
+            this.message = message;
+            this.messageType = null;
+        }
+        
+        Message( String version, String messageName, String encoding, String messageType, boolean isValid, String message) {
+            this.version = version;
+            this.messageName = messageName;
+            this.encoding = encoding;
+            this.messageType = messageType;
+            this.isValid = isValid;
+            this.message = message;
+        }
+        
+        @Override
+        public String toString() {
+            return "Message [version=" + version + ", messageName=" + messageName + ", encoding=" + 
+                            encoding + ", messageType=" + messageType + ", valid?=" + isValid + ", " + "message=" + message +"]";
+        }
+    }
 	
 	Message[] test_messages = {
 			
@@ -118,35 +146,59 @@ public class DecodeMessageServiceTest extends JerseyTest  {
 		//new Message("2.3", "gov.usdot.asn1.generated.j2735.semi.DataSubscriptionResponse", "Hex", false, "850000000000202 123 02026264666800000"),
 		new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.ServiceResponse", "Hex", false, "8420000000002020203fdf81ef2e8 123 0055a409df92e6c72fab25627757bc41cd046b2800000008000000000000000000000000000000000000000000000000000000000"),
 		
+		
+		// invalid due to blank version
+		new Message("", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		// invalid due to bad version
+        new Message("Nonsense", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		
+		// invalid due to wrong message type
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", "gov.usdot.asn1.generated.j2735.semi.ServiceRequest", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		
+		// invalid due to blank encoding type
+		new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		// invalid due to bad encoding type
+		new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Nonsense", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		// invalid due to using BER encoding
+		new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "BER", false, "c4400000000000003e9000003e9227a318401c4fecbf89c2a070074d339fe00000ad9a01038a8d0d2e640d2e640c2dc40c2c8ecd2e6dee4f240dacae6e6c2ceca5c0"),
+		
+		// invalid due to blank message
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", false, ""),
+        // invalid due to bad message hex
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", false, "Nonsense"),
+        // invalid due to bad message
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", false, "00"),
+        // invalid due to bad message
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", false, "00"),
+        new Message("MVP", "gov.usdot.asn1.generated.j2735.semi.AdvisorySituationData", "Hex", "", false, "00"),
 	};
 	
-	@Test
-	public void testMessages() throws JSONException {	
-		for( Message message : test_messages ) {
-			System.out.println("Testing message: " + message.toString());
-			testMessage( message );
-		}
-	}
+	private static final String PACKAGE_NAME = DecodeMessageServiceTest.class.getPackage().getName();
 	
-	private void testMessage( Message message) throws JSONException {	
-		WebResource webResource = buildWebResource(message.version, message.message, message.encoding, message.messageType);
+	private void testMessage(Message message) throws JSONException
+	{	
+		WebResource webResource = buildWebResource(message);
 		DecodeMessageResult result = webResource.get(DecodeMessageResult.class);
 		
 		if( message.isValid ) {
 			JSONObject res = new JSONObject(result.getMessage());
 			assertNotNull(res);
+			
 			if ( message.messageName != null ) {
-				boolean match = 
-						res.getString("messageName").equals(message.messageName) ||
-						res.getString("messageName").endsWith("." + message.messageName);
-				assertTrue(match);
+			    String resultName = res.getString("messageName");
+			    boolean isExpected = resultName.equals(message.messageName);
+			    boolean hasExpectedSuffix = resultName.endsWith("." + message.messageName);
+				assertTrue(isExpected || hasExpectedSuffix);
 			}
-    		assertEquals(Status.Success, result.getStatus());
-		} else 
+			
+    		    assertEquals(Status.Success, result.getStatus());
+		} else {
 			assertEquals(Status.Error, result.getStatus());
-	}	
-	
-	private WebResource buildWebResource(String messageVersion, String encodedMsg, String encoding, String messageType) {
+		}
+	}
+
+	private WebResource buildWebResource(String messageVersion, String encodedMsg, String encoding, String messageType)
+	{
 		WebResource webResource = resource().path("decode");
 		webResource = (messageVersion != null) ? webResource.queryParam("messageVersion", messageVersion) : webResource;
 		webResource = (encodedMsg != null) ? webResource.queryParam("encodedMsg", encodedMsg) : webResource;
@@ -154,4 +206,12 @@ public class DecodeMessageServiceTest extends JerseyTest  {
 		webResource = (messageType != null) ? webResource.queryParam("messageType", messageType) : webResource;
 		return webResource;
 	}
+	
+	private WebResource buildWebResource(Message message)
+    {
+        return buildWebResource(message.version, 
+                                message.message, 
+                                message.encoding, 
+                                message.messageType);
+    }
 }

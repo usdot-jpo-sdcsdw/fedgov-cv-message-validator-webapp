@@ -23,8 +23,124 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sun.jersey.core.util.Base64;
 
 @Path("/decode")
-public class DecodeMessageResource {
+public class DecodeMessageResource
+{
+    @GET
+    @Path("/getConfiguration")
+    @Produces("application/json")
+    public DecodeMessageResult getConfiguration()
+    {
+        DecodeMessageResult result = new DecodeMessageResult();
+        result.setMessage(configuration.toString());
+        result.setStatus(Status.Success);
+        return result;
+    }
+    
+    @GET
+    @Produces("application/json")
+    public DecodeMessageResult
+        decode(@QueryParam("messageVersion") String messageVersion,
+               @QueryParam("encodeType") String encodingType,
+               @QueryParam("encodedMsg") String encodedMsg,
+               @QueryParam("messageType") String messageType)
+    {
+        try {
+            
+            log.debug("input message version: " + messageVersion);
+            log.debug("input encoding type: " + encodingType);
+            log.debug("input encoded message: " + encodedMsg);
+            log.debug("input message type: " + messageType);
+            if (StringUtils.isBlank(messageVersion))
+                throw new DecodeMessageException(
+                        "Missing message version parameter.");
+            if (StringUtils.isBlank(encodedMsg))
+                throw new DecodeMessageException("Missing encoded message.");
+            if (StringUtils.isBlank(encodingType))
+                throw new DecodeMessageException("Missing encoding type.");
 
+            EncodeType eType = EncodeType.getType(encodingType);
+            if (eType == null)
+                throw new DecodeMessageException(
+                        "Error determining encoding type.");
+
+            EncodeVersion eVersion = EncodeVersion.getType(messageVersion);
+            if (eVersion == null)
+                throw new DecodeMessageException(
+                        "Error determining encoding type.");
+
+            byte[] encoded_ba = null;
+            try{
+                switch (eType) {
+                case BASE64:
+                    encoded_ba = Base64.decode(encodedMsg);
+                    break;
+                case HEX:
+                    //if (encodedMsg.length()/2 != 0) {
+                    //  throw new DecodeMessageException("Invalid hex string, hex string should have an even number of digits");
+                    //}
+                    encoded_ba = new HexPerData(encodedMsg).getPerData();
+                    break;
+                case BER:
+                    log.error("Unexpected type BER");
+                }
+            } catch (Exception e) {
+                DecodeMessageResult result = new DecodeMessageResult();
+                JSONObject returnStatusObject = new JSONObject();
+                try {
+                    returnStatusObject.put("messageName", "Unknown");
+                    returnStatusObject.put("decodedMessage", "Error parsing input message text to bytes.  Error was: "+e.getMessage());
+                } catch (JSONException je) {
+                    // ignore
+                }
+                result.setStatus(Status.Error);
+                result.setMessage(returnStatusObject.toString());
+                return result;
+            }
+            return decode(eVersion, encoded_ba, messageType);
+        } catch (DecodeMessageException e) {
+            DecodeMessageResult result = new DecodeMessageResult();
+            JSONObject returnStatusObject = new JSONObject();
+            try {
+                returnStatusObject.put("messageName", "Unknown");
+                returnStatusObject.put("decodedMessage", e.getMessage());
+            } catch (JSONException je) {
+                // ignore
+            }
+
+            result.setStatus(Status.Error);
+            result.setMessage(returnStatusObject.toString());
+            return result;
+        } 
+    }
+    
+    enum EncodeVersion
+    {
+        v20("2.0"),
+        v21("2.1"),
+        v22("2.2"),
+        v23("2.3"),
+        v24("2.4"),
+        vMVP ("MVP");
+
+        private String representation;
+
+        private EncodeVersion(String s) {
+            this.representation = s;
+        }
+
+        public static EncodeVersion getType(String r) {
+            for (EncodeVersion v : EncodeVersion.values()) {
+                if (v.representation.equalsIgnoreCase(r))
+                    return v;
+            }
+            return null;
+        }
+        
+        public String getValue() {
+            return representation;
+        }
+    }
+    
 	@Context
 	HttpServletRequest request;
 
@@ -48,7 +164,6 @@ public class DecodeMessageResource {
 			validators.put(EncodeVersion.vMVP, vMVPvalidator);
 			
 			String version = EncodeVersion.vMVP.getValue();
-			@SuppressWarnings("unchecked")
 			List<String> messages = (List<String>)vMVPvalidator.getMessageTypes();
 			configuration.addConfiguration(version, messages);
 			log.debug("Registered validator version: " + version);
@@ -65,133 +180,30 @@ public class DecodeMessageResource {
 		}
 	}
 
-	private enum EncodeType {
+	private enum EncodeType
+	{
 		HEX("Hex"), BASE64("Base64"), BER("BER");
 
-		private String representation;
-
-		private EncodeType(String s) {
-			this.representation = s;
-		}
-
-		public static EncodeType getType(String r) {
+		public static EncodeType getType(String r)
+		{
 			for (EncodeType v : EncodeType.values()) {
 				if (v.representation.equalsIgnoreCase(r))
 					return v;
 			}
 			return null;
 		}
-	}
-
-	enum EncodeVersion {
-		v20("2.0"), v21("2.1"), v22("2.2"), v23("2.3"), v24("2.4"), vMVP ("MVP");
-
-		private String representation;
-
-		private EncodeVersion(String s) {
-			this.representation = s;
-		}
-
-		public static EncodeVersion getType(String r) {
-			for (EncodeVersion v : EncodeVersion.values()) {
-				if (v.representation.equalsIgnoreCase(r))
-					return v;
-			}
-			return null;
-		}
 		
-		public String getValue() {
-			return representation;
-		}
-	}
-	
-	@GET
-	@Path("/getConfiguration")
-	@Produces("application/json")
-	public DecodeMessageResult getConfiguration() {
-		DecodeMessageResult result = new DecodeMessageResult();
-		result.setMessage(configuration.toString());
-		result.setStatus(Status.Success);
-		return result;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public DecodeMessageResult decode(
-			@QueryParam("messageVersion") String messageVersion,
-			@QueryParam("encodeType") String encodingType,
-			@QueryParam("encodedMsg") String encodedMsg,
-			@QueryParam("messageType") String messageType) {
-		try {
-			
-			log.debug("input message version: " + messageVersion);
-			log.debug("input encoding type: " + encodingType);
-			log.debug("input encoded message: " + encodedMsg);
-			log.debug("input message type: " + messageType);
-			if (StringUtils.isBlank(messageVersion))
-				throw new DecodeMessageException(
-						"Missing message version parameter.");
-			if (StringUtils.isBlank(encodedMsg))
-				throw new DecodeMessageException("Missing encoded message.");
-			if (StringUtils.isBlank(encodingType))
-				throw new DecodeMessageException("Missing encoding type.");
+		private final String representation;
 
-			EncodeType eType = EncodeType.getType(encodingType);
-			if (eType == null)
-				throw new DecodeMessageException(
-						"Error determining encoding type.");
-
-			EncodeVersion eVersion = EncodeVersion.getType(messageVersion);
-			if (eVersion == null)
-				throw new DecodeMessageException(
-						"Error determining encoding type.");
-
-			byte[] encoded_ba = null;
-			try{
-				switch (eType) {
-				case BASE64:
-					encoded_ba = Base64.decode(encodedMsg);
-					break;
-				case HEX:
-					//if (encodedMsg.length()/2 != 0) {
-					//	throw new DecodeMessageException("Invalid hex string, hex string should have an even number of digits");
-					//}
-					encoded_ba = new HexPerData(encodedMsg).getPerData();
-					break;
-				case BER:
-					log.error("Unexpected type BER");
-				}
-			} catch (Exception e) {
-				DecodeMessageResult result = new DecodeMessageResult();
-				JSONObject returnStatusObject = new JSONObject();
-				try {
-					returnStatusObject.put("messageName", "Unknown");
-					returnStatusObject.put("decodedMessage", "Error parsing input message text to bytes.  Error was: "+e.getMessage());
-				} catch (JSONException je) {
-					// ignore
-				}
-				result.setStatus(Status.Error);
-				result.setMessage(returnStatusObject.toString());
-				return result;
-			}
-			return decode(eVersion, encoded_ba, messageType);
-		} catch (DecodeMessageException e) {
-			DecodeMessageResult result = new DecodeMessageResult();
-			JSONObject returnStatusObject = new JSONObject();
-			try {
-				returnStatusObject.put("messageName", "Unknown");
-				returnStatusObject.put("decodedMessage", e.getMessage());
-			} catch (JSONException je) {
-				// ignore
-			}
-
-			result.setStatus(Status.Error);
-			result.setMessage(returnStatusObject.toString());
-			return result;
-		} 
+        private EncodeType(String s) {
+            this.representation = s;
+        }
 	}
 
-	private DecodeMessageResult decode(EncodeVersion eVersion, byte[] bytes, String messageType) {
+	private DecodeMessageResult decode(EncodeVersion eVersion,
+	                                   byte[] bytes,
+	                                   String messageType)
+	{
 		DecodeMessageResult result = new DecodeMessageResult();
 		try {
 			SemiValidator validator = validators.get(eVersion);

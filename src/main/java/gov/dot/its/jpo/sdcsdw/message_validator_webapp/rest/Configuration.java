@@ -8,48 +8,61 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class Configuration {
 	
-	final public static String title = "Connected Vehicle Message Validator";
-	final public static String subtitle = "Unified Model Architecture Using J2735 3/2016";
-	final public static String version = "1.4";
-	final public static String release = "March 11, 2017, 10am EST";	
-	final public static String copyright = "2014-2017";
+    public Configuration() throws JSONException
+    {
+        JSONObject application = new JSONObject();
+        application.put(TITLE_KEY, TITLE);
+        application.put(SUBTITLE_KEY, SUBTITLE);
+        application.put(VERSION_KEY, VERSION);
+        application.put(RELEASE_KEY, RELEASE);      
+        application.put(COPYRIGHT_KEY, COPYRIGHT);
+        configuraton.put(APPLICATION_KEY, application);
+        configuraton.put(DEFAULT_INDEX_KEY, 0);
+        JSONArray validators = new JSONArray();
+        configuraton.put(VALIDATORS_KEY, validators);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return configuraton.toString();
+    }
+    
+    public String toString(int indentFactor) throws JSONException
+    {
+        return configuraton.toString(indentFactor);
+    }
+    
+	static final String VALIDATORS_KEY = "validators";
+    static final String DEFAULT_INDEX_KEY = "defaultIndex";
+    static final String APPLICATION_KEY = "application";
+    static final String COPYRIGHT_KEY = "copyright";
+    static final String RELEASE_KEY = "release";
+    static final String VERSION_KEY = "version";
+    static final String SUBTITLE_KEY = "subtitle";
+    static final String TITLE_KEY = "title";
+    static final String TITLE = "Connected Vehicle Message Validator";
+	static final String SUBTITLE = "Unified Model Architecture Using J2735 3/2016";
+	static final String VERSION = "1.4";
+	static final String RELEASE = "March 11, 2017, 10am EST";	
+	static final String COPYRIGHT = "2014-2017";
 	
-	private JSONObject configuraton = new JSONObject();
-
-	public Configuration() throws JSONException {
-		JSONObject application = new JSONObject();
-		application.put("title", title);
-		application.put("subtitle", subtitle);
-		application.put("version", version);
-		application.put("release", release);		
-		application.put("copyright", copyright);
-		configuraton.put("application", application);
-		configuraton.put("defaultIndex", 0);
-		JSONArray validators = new JSONArray();
-		configuraton.put("validators", validators);
-	}
-	
-	void setDefaultIndex(int index) throws JSONException {
+	void setDefaultIndex(int index) throws JSONException
+	{
 		if ( index >= 0 ) {
-			configuraton.put("defaultIndex", index);
+			configuraton.put(DEFAULT_INDEX_KEY, index);
 		}
 	}
 	
-	void addConfiguration(String version, List<String> messages) throws JSONException {
+	void addConfiguration(String version, List<String> messages)
+	        throws JSONException
+	{
 		JSONObject validator = new JSONObject();
-		validator.put("version", version);
+		validator.put(VERSION_KEY, version);
 		validator.put("messages", messages);
-		JSONArray validators = configuraton.getJSONArray("validators");
+		JSONArray validators = configuraton.getJSONArray(VALIDATORS_KEY);
 		validators.put(validator);
 	}
 	
-	@Override
-	public String toString() {
-		return configuraton.toString();
-	}
-	
-	public String toString(int indentFactor) throws JSONException {
-		return configuraton.toString(indentFactor);
-	}
-
+	private JSONObject configuraton = new JSONObject();
 }

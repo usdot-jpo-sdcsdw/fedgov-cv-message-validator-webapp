@@ -17,6 +17,8 @@ specifications and standards prior to depositing into a warehouse.
 
 [V. Running the Application (Docker)](#running-docker)
 
+[VI. CI/CD](#cicd)
+
 ---
 
 <a name="release-notes" id="release-notes"/>
@@ -109,5 +111,20 @@ docker run -p HTTP_PORT:8080 \
            -e JETTY_KEYSTORE_RELATIVE_PATH=... \
             dotcv/message-validator-webapp
 ```
+
+<a name="cicd"/>
+
+## VI CI/CD
+
+The project can be built using a Jenkins CI/CD server, equipped with the following plugins:
+* Docker: TBD
+* Pipeline: TBD
+* Maven: TBD
+* EnvInject: TBD
+
+In addition, the following variables will need to be set using the EnvInject plugin:
+* DOCKER_IMAGE - Image name
+* DOCKER_URL - URL for the Docker Repo to push to
+* DOCKER_CRED - Credentials to the Docker Repo
 
 </a>

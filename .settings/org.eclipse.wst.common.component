@@ -5,7 +5,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="per-xer-codec-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/per-xer-codec/per-xer-codec">
+        <dependent-module archiveName="per-xer-codec-java-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/per-xer-codec-java/per-xer-codec-java">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="validator"/>

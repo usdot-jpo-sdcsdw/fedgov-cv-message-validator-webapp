@@ -19,7 +19,7 @@ pipeline {
             }
             post {
                 success {
-                    juint 'target/surfile-reports/**/*.xml'
+                    juint 'target/surefile-reports/**/*.xml'
                 }
             }
         }

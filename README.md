@@ -54,7 +54,7 @@ The following instructions describe the proceedure to fetch, build, and run the 
 Clone the source code from the GitHub repository using Git command:
 
 ```bash
-git clone https://github.com/usdot-jpo-ode/jpo-tim-builder.git
+git clone TBD
 ```
 
 <a name="running"/>

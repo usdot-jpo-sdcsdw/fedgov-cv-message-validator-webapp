@@ -96,6 +96,9 @@ mvn package
 docker build -t dotcv/message-validator-webapp --build-arg CODEC_SO_PATH=... .
 ```
 
+This path depends on which OS you are building on. If you are building on a Linux system, codec is located at target/libper-xer-codec.so after running the maven build.
+If you are building on OSX, you will need to provide the path to the Linux SO you built manually, according to the instructions provided by that project.
+
 **Step 3**: Run the Docker image in a Container, mounting the SSL certificate keystore directory, and specifying the following:
 * Keystore filename
 * Keystore password

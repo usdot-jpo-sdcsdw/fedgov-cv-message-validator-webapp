@@ -3,6 +3,8 @@
 The fedgov-cv-message-validator-webapp project is a webapp to validate ASN.1 messages by checking for accuracy against the
 specifications and standards prior to depositing into a warehouse.
 
+![Diagram](doc/images/fedgov-cv-message-validator-webapp-screenshot.png)
+
 <a name="toc"/>
 
 ## Table of Contents

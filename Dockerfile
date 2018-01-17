@@ -1,7 +1,7 @@
 FROM jetty:9.3.11-jre8-alpine
 
 # The relative path to the shared object for the codec shared object
-ARG CODEC_SO_PATH=./libper-xer-codec.so
+ARG CODEC_SO_PATH=target/libper-xer-codec.so
 
 # Mount the keystore here
 VOLUME $JETTY_HOME/etc/keystore_mount

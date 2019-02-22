@@ -1,3 +1,6 @@
 logs/
 target/
 .idea/
+.settings
+.classpath
+.project
